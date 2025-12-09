@@ -1,0 +1,52 @@
+Program-----8
+
+df <- dataset
+
+print(names(df))
+names(df) <- make.names(names(df))
+print(names(df))
+
+df <- df[complete.cases(df[, c("Cost.of.Sales", "Unit.Cost", "Price", "Order.Qty")]), ]
+
+m <- lm(Cost.of.Sales ~ Unit.Cost + Price + Order.Qty, data = df)
+
+df$PredictedSales <- predict(m, df)
+
+df
+
+
+Program--- 9
+library(rpart)
+
+df <- dataset
+names(df) <- make.names(names(df))
+
+df <- na.omit(df)
+
+df$SalesClass <- ifelse(df$Cost.of.Sales > 200, "High", "Low")
+df$SalesClass <- factor(df$SalesClass)
+
+model <- rpart(SalesClass ~ Unit.Cost + Price + Order.Qty,
+               data = df, method = "class")
+
+df$PredictedClass <- predict(model, df, type = "class")
+df$ProbHigh <- predict(model, df, type = "prob")[, "High"]
+
+df
+
+
+
+
+Program----10
+df <- dataset
+names(df) <- make.names(names(df))
+df <- na.omit(df)
+
+x <- df[, c("Cost.of.Sales", "Unit.Cost", "Price", "Order.Qty")]
+
+set.seed(123)
+km <- kmeans(x, centers = 3)
+
+df$Cluster <- factor(km$cluster)
+
+df
